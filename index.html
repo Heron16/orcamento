@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinançasPro – Controle Financeiro Pessoal</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ========== SIDEBAR ========== -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon">💰</span>
+    <span class="logo-text">FinançasPro</span>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-page="dashboard">
+      <span class="nav-icon">📊</span><span>Dashboard</span>
+    </a>
+    <a href="#" class="nav-item" data-page="lancamentos">
+      <span class="nav-icon">📝</span><span>Lançamentos</span>
+    </a>
+    <a href="#" class="nav-item" data-page="mensal">
+      <span class="nav-icon">📅</span><span>Visão Mensal</span>
+    </a>
+    <a href="#" class="nav-item" data-page="anual">
+      <span class="nav-icon">📆</span><span>Visão Anual</span>
+    </a>
+    <a href="#" class="nav-item" data-page="reservas">
+      <span class="nav-icon">🏦</span><span>Reservas</span>
+    </a>
+    <a href="#" class="nav-item" data-page="conquistas">
+      <span class="nav-icon">🎯</span><span>Conquistas</span>
+    </a>
+  </nav>
+  <div class="sidebar-footer">
+    <button class="btn-clear" onclick="clearAllData()">🗑️ Limpar Dados</button>
+  </div>
+</aside>
+
+<!-- ========== MAIN ========== -->
+<main class="main-content">
+
+  <!-- HEADER -->
+  <header class="top-bar">
+    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+    <div class="header-info">
+      <span id="currentDate"></span>
+    </div>
+  </header>
+
+  <!-- ===== PAGE: DASHBOARD ===== -->
+  <section class="page active" id="page-dashboard">
+    <div class="cards-grid">
+      <div class="card card-green">
+        <div class="card-icon">💵</div>
+        <div class="card-info">
+          <span class="card-label">Receita Este Mês</span>
+          <span class="card-value" id="dash-receita">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-red">
+        <div class="card-icon">💸</div>
+        <div class="card-info">
+          <span class="card-label">Gastos Este Mês</span>
+          <span class="card-value" id="dash-gastos">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-icon">🏦</div>
+        <div class="card-info">
+          <span class="card-label">Total Guardado</span>
+          <span class="card-value" id="dash-guardado">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-icon">📈</div>
+        <div class="card-info">
+          <span class="card-label">Saldo Disponível</span>
+          <span class="card-value" id="dash-saldo">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <h3>Receita vs Gastos (Últimos 6 Meses)</h3>
+        <canvas id="chartReceitaGastos"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Distribuição de Gastos por Categoria</h3>
+        <canvas id="chartCategorias"></canvas>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box chart-box-full">
+        <h3>Evolução das Reservas</h3>
+        <canvas id="chartReservas"></canvas>
+      </div>
+    </div>
+
+    <div class="section-title">🎯 Progresso das Conquistas</div>
+    <div id="dash-conquistas-list" class="conquistas-dash"></div>
+  </section>
+
+  <!-- ===== PAGE: LANÇAMENTOS ===== -->
+  <section class="page" id="page-lancamentos">
+    <div class="form-card">
+      <h2>Novo Lançamento</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tipo</label>
+          <select id="lanc-tipo">
+            <option value="receita">💵 Receita</option>
+            <option value="gasto">💸 Gasto</option>
+            <option value="reserva">🏦 Reserva (Guardar)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <input type="text" id="lanc-desc" placeholder="Ex: Salário, Aluguel, Mercado..." />
+        </div>
+        <div class="form-group">
+          <label>Valor (R$)</label>
+          <input type="number" id="lanc-valor" placeholder="0,00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="lanc-categoria">
+            <option value="Moradia">🏠 Moradia</option>
+            <option value="Alimentação">🍽️ Alimentação</option>
+            <option value="Transporte">🚗 Transporte</option>
+            <option value="Saúde">🏥 Saúde</option>
+            <option value="Educação">📚 Educação</option>
+            <option value="Lazer">🎮 Lazer</option>
+            <option value="Vestuário">👗 Vestuário</option>
+            <option value="Serviços">💡 Serviços</option>
+            <option value="Salário">💼 Salário</option>
+            <option value="Investimento">📈 Investimento</option>
+            <option value="Outros">📦 Outros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="lanc-data" />
+        </div>
+        <div class="form-group">
+          <label>Recorrência</label>
+          <select id="lanc-recorrencia">
+            <option value="unica">Única</option>
+            <option value="mensal">Mensal</option>
+            <option value="anual">Anual</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="adicionarLancamento()">➕ Adicionar Lançamento</button>
+    </div>
+
+    <div class="table-card">
+      <div class="table-header">
+        <h2>Lançamentos Recentes</h2>
+        <div class="filter-row">
+          <input type="text" id="filtro-busca" placeholder="🔍 Buscar..." oninput="filtrarLancamentos()" />
+          <select id="filtro-tipo" onchange="filtrarLancamentos()">
+            <option value="">Todos os tipos</option>
+            <option value="receita">Receita</option>
+            <option value="gasto">Gasto</option>
+            <option value="reserva">Reserva</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrapper">
+        <table id="tabelaLancamentos">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Categoria</th>
+              <th>Tipo</th>
+              <th>Valor</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tbody-lancamentos"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: VISÃO MENSAL ===== -->
+  <section class="page" id="page-mensal">
+    <div class="month-selector">
+      <button onclick="mudarMes(-1)">◀</button>
+      <span id="mesAtualLabel"></span>
+      <button onclick="mudarMes(1)">▶</button>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card card-green">
+        <div class="card-icon">💵</div>
+        <div class="card-info">
+          <span class="card-label">Receitas do Mês</span>
+          <span class="card-value" id="men-receita">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-red">
+        <div class="card-icon">💸</div>
+        <div class="card-info">
+          <span class="card-label">Gastos do Mês</span>
+          <span class="card-value" id="men-gastos">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-icon">🏦</div>
+        <div class="card-info">
+          <span class="card-label">Guardado no Mês</span>
+          <span class="card-value" id="men-guardado">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-icon">💰</div>
+        <div class="card-info">
+          <span class="card-label">Saldo do Mês</span>
+          <span class="card-value" id="men-saldo">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box">
+        <h3>Gastos por Categoria no Mês</h3>
+        <canvas id="chartMensalCategorias"></canvas>
+      </div>
+      <div class="chart-box">
+        <h3>Gastos por Dia</h3>
+        <canvas id="chartMensalDias"></canvas>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <h2>Lançamentos do Mês</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Tipo</th><th>Valor</th></tr>
+          </thead>
+          <tbody id="tbody-mensal"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: VISÃO ANUAL ===== -->
+  <section class="page" id="page-anual">
+    <div class="year-selector">
+      <button onclick="mudarAno(-1)">◀</button>
+      <span id="anoAtualLabel"></span>
+      <button onclick="mudarAno(1)">▶</button>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card card-green">
+        <div class="card-icon">💵</div>
+        <div class="card-info">
+          <span class="card-label">Receitas do Ano</span>
+          <span class="card-value" id="anu-receita">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-red">
+        <div class="card-icon">💸</div>
+        <div class="card-info">
+          <span class="card-label">Gastos do Ano</span>
+          <span class="card-value" id="anu-gastos">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-blue">
+        <div class="card-icon">🏦</div>
+        <div class="card-info">
+          <span class="card-label">Guardado no Ano</span>
+          <span class="card-value" id="anu-guardado">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-icon">📊</div>
+        <div class="card-info">
+          <span class="card-label">Taxa de Poupança</span>
+          <span class="card-value" id="anu-taxa">0%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box chart-box-full">
+        <h3>Receita vs Gastos vs Reservas por Mês</h3>
+        <canvas id="chartAnual"></canvas>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <h2>Resumo Mensal do Ano</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Mês</th><th>Receitas</th><th>Gastos</th><th>Guardado</th><th>Saldo</th></tr>
+          </thead>
+          <tbody id="tbody-anual"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: RESERVAS ===== -->
+  <section class="page" id="page-reservas">
+    <div class="form-card">
+      <h2>Acompanhamento de Reservas</h2>
+      <p class="form-hint">Use o lançamento tipo "Reserva" para registrar o quanto você guardou. Aqui você acompanha o crescimento das suas reservas ao longo do tempo.</p>
+    </div>
+
+    <div class="cards-grid">
+      <div class="card card-blue">
+        <div class="card-icon">🏦</div>
+        <div class="card-info">
+          <span class="card-label">Total Acumulado</span>
+          <span class="card-value" id="res-total">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-green">
+        <div class="card-icon">📅</div>
+        <div class="card-info">
+          <span class="card-label">Guardado Este Mês</span>
+          <span class="card-value" id="res-mes">R$ 0,00</span>
+        </div>
+      </div>
+      <div class="card card-purple">
+        <div class="card-icon">📆</div>
+        <div class="card-info">
+          <span class="card-label">Guardado Este Ano</span>
+          <span class="card-value" id="res-ano">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-row">
+      <div class="chart-box chart-box-full">
+        <h3>Crescimento das Reservas ao Longo do Tempo</h3>
+        <canvas id="chartReservasCres"></canvas>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <h2>Histórico de Depósitos em Reserva</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr><th>Data</th><th>Descrição</th><th>Valor</th><th>Acumulado</th></tr>
+          </thead>
+          <tbody id="tbody-reservas"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAGE: CONQUISTAS ===== -->
+  <section class="page" id="page-conquistas">
+    <div class="form-card">
+      <h2>Nova Conquista / Meta</h2>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nome da Conquista</label>
+          <input type="text" id="conq-nome" placeholder="Ex: Viagem para Europa, Carro, Casa..." />
+        </div>
+        <div class="form-group">
+          <label>Valor Total Necessário (R$)</label>
+          <input type="number" id="conq-valor" placeholder="0,00" min="0" step="0.01" />
+        </div>
+        <div class="form-group">
+          <label>Já Guardei (R$)</label>
+          <input type="number" id="conq-guardado" placeholder="0,00" min="0" step="0.01" value="0" />
+        </div>
+        <div class="form-group">
+          <label>Data Alvo</label>
+          <input type="date" id="conq-data" />
+        </div>
+        <div class="form-group">
+          <label>Ícone / Emoji</label>
+          <input type="text" id="conq-icone" placeholder="🏠 🚗 ✈️ 💻 📱" maxlength="2" />
+        </div>
+        <div class="form-group">
+          <label>Prioridade</label>
+          <select id="conq-prioridade">
+            <option value="alta">🔴 Alta</option>
+            <option value="media">🟡 Média</option>
+            <option value="baixa">🟢 Baixa</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="adicionarConquista()">🎯 Adicionar Conquista</button>
+    </div>
+
+    <div id="conquistas-list" class="conquistas-grid"></div>
+  </section>
+
+</main>
+
+<!-- TOAST -->
+<div id="toast" class="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>
